@@ -14,6 +14,7 @@ Abstract on Proposal: Low luminosity galaxies remain at large unanalysed as a re
 ## Project Plan
 
 - [ ] Polynomial Regression analysis
+- [ ] Invesitgate "include_bias" peramater of PolynomialFeatures function
 
 ### Broard Plan for Entire Project:
 
