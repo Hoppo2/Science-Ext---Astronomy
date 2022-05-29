@@ -10,6 +10,7 @@ Abstract on Proposal: Low luminosity galaxies remain at large unanalysed as a re
 
 - Decreased relationship between redshift and luminosity at low luminosities
 - Distinct (but small) classes of galaxies at low luminsoities (and some at high)
+- No significant model from linear regression analysis (r^2 = 0.14)
 
 ## Project Plan
 
