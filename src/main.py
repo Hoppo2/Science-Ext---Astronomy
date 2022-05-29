@@ -42,8 +42,12 @@ class _Data:
 class Regression(_Data):
     def __init__(self):
         _Data.__init__(self)
-        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.Excl_Mcz, self.data["Mcz"], test_size=0.2,
-                                                            random_state=5)
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
+            self.Excl_Mcz, 
+            self.data["Mcz"], 
+            test_size=0.2,
+            random_state=5
+        )
 
     def polynomial(self, degree, include_bias=False):
         """
@@ -122,8 +126,9 @@ class Plot:
 
     def rs_i(self):
         """
-        To be honest, this is a pretty *badly* constructed method.
-        :return:
+        To be honest, this is a pretty *badly* constructed method. Plots (two axis) luminosity in the restricted 
+        visible wavelengths (x axis) and redshift (y axis). 
+        :return: None
         """
         x, y = [], []
         x2, y2 = [], []
@@ -174,10 +179,13 @@ class Plot:
 
             plt.show()
 
+            return None
+
     def s_i(self):
         """
-        To be honest, this is also a pretty *badly* constructed method.
-        :return:
+        To be honest, this is also a pretty *badly* constructed method. Plots (two axis) luminosity in the complete 
+        visible wavelengths in the COMBO17 dataset (x axis) and redshift (y axis). 
+        :return: None
         """
         x, y = [], []
         x2, y2 = [], []
@@ -275,6 +283,8 @@ class Plot:
             axis[1, 3].set_title("914FE")
 
             plt.show()
+            
+            return None
 
 
 class Graphical(_Data):
@@ -282,6 +292,11 @@ class Graphical(_Data):
         _Data.__init__(self)
 
     def three_band(self):
+        """
+        Three-dimensional graph of the relationships between wavelengths 462 (x axis), 646 (y axis), 914 (z axis) and
+        redshift (colour map)
+        :return: None
+        """
         xdata = self.data["W462FE"]
         ydata = self.data["W646FD"]
         zdata = self.data["W914FD"]
@@ -291,7 +306,14 @@ class Graphical(_Data):
 
         ax = fig.add_subplot(111, projection='3d')
 
-        img = ax.scatter(xdata, ydata, zdata, c=cdata, cmap=plt.hot())
+        img = ax.scatter(
+            x=xdata, 
+            y=ydata, 
+            z=zdata, 
+            c=cdata, 
+            cmap=plt.hot()
+        )
+        
         fig.colorbar(img)
         ax.set_xlabel('Wavelength = 462nm')
         ax.set_ylabel('Wavelength = 646nm')
@@ -299,21 +321,35 @@ class Graphical(_Data):
 
         plt.show()
 
+        return None
+
     def two_axis(self):
+        """
+        Two-dimensional graph of the relationship between galaxy luminosity (y axis) and redshift (x axis)
+        :return: None
+        """
         xdata = self.data["Mcz"]
         ydata = self.data["mumax"]
 
         plt.scatter(xdata, ydata)
 
         plt.xlabel("Redshift (Mcz)")
-        plt.ylabel("Luminsoity (mumax)")
+        plt.ylabel("Luminosity (mumax)")
 
         plt.show()
+
+        return None
 
 
 class I_spent_more_time_coding_this_than_doing_it_manually:
     @staticmethod
     def Excel_Export(array, Workbook_Name):
+        """
+        Exports an array to a excel workbook given by Workbook_Name
+        :param array: Numpy Array
+        :param Workbook_Name: Name given to the excel workbook
+        :return: None
+        """
         workbook = xlsxwriter.Workbook('{}.xlsx'.format(Workbook_Name))
         worksheet = workbook.add_worksheet()
 
@@ -324,8 +360,8 @@ class I_spent_more_time_coding_this_than_doing_it_manually:
 
         workbook.close()
 
+        return None
+
 
 if __name__ == "__main__":
-    Graphical().three_band()
-    Graphical().two_axis()
-
+    # Use this statement to run any methods
