@@ -15,8 +15,6 @@ Current findings:
 
 - [ ] Polynomial Regression analysis
 
-Table:
-
-Term/Week	Outcome
+### Broard Plan for Entire Project:
 
 ![image](https://user-images.githubusercontent.com/67666971/170865874-d73b412c-320b-4966-b5d2-942233f580a8.png)
