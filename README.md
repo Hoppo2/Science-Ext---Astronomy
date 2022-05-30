@@ -14,10 +14,9 @@ Low luminosity galaxies remain at large unanalysed as a result of previous limit
 
 ## Aim and Hypothesis:
 
-Aim: To analyse the relationship in galaxies between redshift and luminosity in wavelengths of the visual spectrum, at low luminosities
-Alternate Hypothesis: That distinct galaxy classes will emerge at low luminosities, characterized by their respective redshifts as a representation of the galaxy’s age, relative motion and therefore stage of development. 
-Null Hypothesis: That emerging clusters aren’t distinct or that there aren’t any meaningful clusters emerging at low luminosities that characterise the galaxy based on age, relative motion and therefore stage of development through redshift.
+**Aim:** To analyse the relationship in galaxies between redshift and luminosity in wavelengths of the visual spectrum, at low luminosities
 
+**Alternate Hypothesis:** That distinct galaxy classes will emerge at low luminosities, characterized by their respective redshifts as a representation of the galaxy’s age, relative motion and therefore stage of development. 
 
 ## Current Findings
 
