@@ -26,7 +26,7 @@ Low luminosity galaxies remain at large unanalysed as a result of previous limit
 ## Project Plan
 
 - [ ] Polynomial Regression analysis
-- [ ] Invesitgate "include_bias" peramater of PolynomialFeatures function
+- [x] Invesitgate "include_bias" peramater of PolynomialFeatures function
 
 ### Broard Plan for Entire Project:
 
