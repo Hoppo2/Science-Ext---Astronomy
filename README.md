@@ -1,6 +1,5 @@
 # Science Ext - Astrophysics
-
-Redshift and luminosity, what can they hint in our evolving universe?
+*Redshift and luminosity, what can they hint in our evolving universe?*
 
 ## Abstract / Summary of initial research
 
