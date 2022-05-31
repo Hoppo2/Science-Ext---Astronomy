@@ -1,5 +1,5 @@
-from astroquery.mast import Observations, Catalogs, Tesscut, Zcut
-from astropy.coordinates import SkyCoord
+# from astroquery.mast import Observations, Catalogs, Tesscut, Zcut
+# from astropy.coordinates import SkyCoord
 
 import xlsxwriter
 import csv
@@ -20,6 +20,7 @@ class _Data:
     """
     This class (_Data) constructs the arrays for various compilations of data
     """
+
     def __init__(self):
         self.data = pd.read_csv("data_sets/COMBO17.csv")
         self.Incl_Mcz = np.array(
@@ -35,7 +36,7 @@ class _Data:
                      self.data["W914FD"]
                      )))
         self.Intensity_Mag = np.array(
-            list(zip(self.data["mumax"], self.data["Mcz"]
+            list(zip(self.data["Mcz"], self.data["mumax"]
                      )))
 
 
@@ -43,8 +44,8 @@ class Regression(_Data):
     def __init__(self):
         _Data.__init__(self)
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
-            self.Excl_Mcz, 
-            self.data["Mcz"], 
+            self.Excl_Mcz,
+            self.data["Mcz"],
             test_size=0.2,
             random_state=5
         )
@@ -88,8 +89,10 @@ class Cluster(_Data):
         """
         model = KMeans(n_clusters=n)
         model.fit(self.Excl_Mcz)
-        score = silhouette_score(self.Excl_Mcz, model.labels_)
-        return [model, score]
+        silhouette = silhouette_score(self.Excl_Mcz, model.labels_)
+        inertia = model.inertia_
+        seed = model.random_state
+        return [model, silhouette, inertia, seed]
 
     def cluster_Incl_Mcz(self, n):
         """
@@ -100,24 +103,68 @@ class Cluster(_Data):
         """
         model = KMeans(n_clusters=n)
         model.fit(self.Incl_Mcz)
-        score = silhouette_score(self.Incl_Mcz, model.labels_)
-        return [model, score]
+        silhouette = silhouette_score(X=self.Incl_Mcz, labels=model.labels_)
+        inertia = model.inertia_
+        seed = model.random_state
+        return [model, silhouette, inertia, seed]
 
-    def visualiser(self, model, Include_Mcz=False):
+    def visualiser(self, model, Include_Mcz=True):
         """
         This method creates a visualiser plot based upon a cluster model.
         :param Include_Mcz: True: Incl_Mcz, False: Excl_Mcz
         :param model: k-means cluster model
-        :return: None
+        :return: visualiser object
         """
         if Include_Mcz:
             _data = self.Incl_Mcz
         else:
             _data = self.Excl_Mcz
         visualiser = SilhouetteVisualizer(model, colors='yellowbrick')
-        visualiser.fit(_data)
+        visualiser.fit(_data)  # _data is the data array used in the creation of cluster model
 
         visualiser.show()
+
+        return visualiser
+
+    @staticmethod
+    def silhouette_graph(n_iterations: int):
+        """
+        This graphs the silhouette score of the range of clusters between 2 and n_iterations.
+        :param n_iterations: Number of iterations (k) calculated. The silhouette score of the model calculated by the
+        number of clusters range (2, n_iterations) will be graphed.
+        :return: plt object
+        """
+        inertia_score = []
+        k = range(2, n_iterations)
+        for n in k:
+            inertia_score.append(Cluster().cluster_Incl_Mcz(n)[1])
+
+        plt.plot(k, inertia_score)
+        plt.xlabel("n clusters")
+        plt.ylabel("silhouette score")
+        plt.show()
+
+        return plt
+
+    @staticmethod
+    def inertia_graph(n_iterations: int):
+        """
+        This graphs the inertia score of the range of clusters between 2 and n_iterations.
+        :param n_iterations: Number of iterations (k) calculated. The inertia of the model calculated by the
+        number of clusters range (2, n_iterations) will be graphed.
+        :return: plt object
+        """
+        inertia_score = []
+        k = range(2, n_iterations)
+        for n in k:
+            inertia_score.append(Cluster().cluster_Incl_Mcz(n)[2])
+
+        plt.plot(k, inertia_score)
+        plt.xlabel("n clusters")
+        plt.ylabel("inertia")
+        plt.show()
+
+        return plt
 
 
 class Plot:
@@ -126,8 +173,8 @@ class Plot:
 
     def rs_i(self):
         """
-        To be honest, this is a pretty *badly* constructed method. Plots (two axis) luminosity in the restricted 
-        visible wavelengths (x axis) and redshift (y axis). 
+        To be honest, this is a pretty *badly* constructed method. Plots (two axis) luminosity in the restricted
+        visible wavelengths (x axis) and redshift (y axis).
         :return: None
         """
         x, y = [], []
@@ -183,8 +230,8 @@ class Plot:
 
     def s_i(self):
         """
-        To be honest, this is also a pretty *badly* constructed method. Plots (two axis) luminosity in the complete 
-        visible wavelengths in the COMBO17 dataset (x axis) and redshift (y axis). 
+        To be honest, this is also a pretty *badly* constructed method. Plots (two axis) luminosity in the complete
+        visible wavelengths in the COMBO17 dataset (x axis) and redshift (y axis).
         :return: None
         """
         x, y = [], []
@@ -283,7 +330,7 @@ class Plot:
             axis[1, 3].set_title("914FE")
 
             plt.show()
-            
+
             return None
 
 
@@ -295,7 +342,7 @@ class Graphical(_Data):
         """
         Three-dimensional graph of the relationships between wavelengths 462 (x axis), 646 (y axis), 914 (z axis) and
         redshift (colour map)
-        :return: None
+        :return: plt object
         """
         xdata = self.data["W462FE"]
         ydata = self.data["W646FD"]
@@ -306,14 +353,8 @@ class Graphical(_Data):
 
         ax = fig.add_subplot(111, projection='3d')
 
-        img = ax.scatter(
-            x=xdata, 
-            y=ydata, 
-            z=zdata, 
-            c=cdata, 
-            cmap=plt.hot()
-        )
-        
+        img = ax.scatter(x=xdata, y=ydata, z=zdata, c=cdata, cmap=plt.hot())
+
         fig.colorbar(img)
         ax.set_xlabel('Wavelength = 462nm')
         ax.set_ylabel('Wavelength = 646nm')
@@ -321,12 +362,12 @@ class Graphical(_Data):
 
         plt.show()
 
-        return None
+        return plt
 
     def two_axis(self):
         """
         Two-dimensional graph of the relationship between galaxy luminosity (y axis) and redshift (x axis)
-        :return: None
+        :return: plt object
         """
         xdata = self.data["Mcz"]
         ydata = self.data["mumax"]
@@ -334,23 +375,42 @@ class Graphical(_Data):
         plt.scatter(xdata, ydata)
 
         plt.xlabel("Redshift (Mcz)")
-        plt.ylabel("Luminosity (mumax)")
+        plt.ylabel("Luminosity (μmax)")
 
         plt.show()
 
-        return None
+        return plt
 
 
-class I_spent_more_time_coding_this_than_doing_it_manually:
+class ManualLabour:
+    @staticmethod
+    def best_model(n_iterations, n_clusters):  # TODO: Rename Score
+        """
+        Function to optimise the random_state for the cluster
+        :param n_iterations: Number of initialisations of the cluster model
+        :param n_clusters: Number of cluster groups in each iteration
+        :return: optimum cluster model
+        """
+        best_model = [None, 0, 0]
+
+        for x in range(1, n_iterations):
+            if Cluster().cluster_Incl_Mcz(n_clusters)[1] > best_model[1]:
+                best_model = Cluster().cluster_Incl_Mcz(n_clusters)
+                print(x, "best")
+            else:
+                print(x)
+
+        return best_model
+
     @staticmethod
     def Excel_Export(array, Workbook_Name):
         """
-        Exports an array to a excel workbook given by Workbook_Name
+        Exports an array to a excel workbook named Workbook_Name
         :param array: Numpy Array
         :param Workbook_Name: Name given to the excel workbook
         :return: None
         """
-        workbook = xlsxwriter.Workbook('{}.xlsx'.format(Workbook_Name))
+        workbook = xlsxwriter.Workbook(f'{Workbook_Name}.xlsx')
         worksheet = workbook.add_worksheet()
 
         row = 0
@@ -364,4 +424,4 @@ class I_spent_more_time_coding_this_than_doing_it_manually:
 
 
 if __name__ == "__main__":
-    # Use this statement to run any methods
+    # Use this to run functions
