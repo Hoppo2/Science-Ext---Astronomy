@@ -1,5 +1,3 @@
-# TODO:
-#   a
 
 from datetime import datetime
 
